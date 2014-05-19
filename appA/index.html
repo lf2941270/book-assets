@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8;">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assert.js"></script>
+
+</head>
+<body>
+<div class="content" style="padding: 100px;">
+  <ul>
+    <li class="list1"></li>
+    <li class="list2"></li>
+    <li class="list3"></li>
+    <li class="list4"></li>
+    <li class="list5"></li>
+  </ul>
+</div>
+<script>
+  var body=document.body;
+  var list = $("ul")[0];
+  list.addEventListener("click",function(event){
+    if(event.currentTarget.tagName.toLowerCase()=="li"){
+      console.log(1);
+    }
+  },false);
+</script>
+</body>
+</html>
