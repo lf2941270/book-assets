@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8;">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js">
+  </script>
+  <script src="../appA/assert.js"></script>
+  <style>
+    #tabs .active{
+      color: #009926;
+    }
+    #tabsContent li{display: none;}
+    #tabsContent li.active{display: block;}
+  </style>
+</head>
+<body style="height: 1000px;">
+
+<ul id="tabs">
+  <li data-tab="users">Users</li>
+  <li data-tab="groups">Groups</li>
+</ul>
+<ul id="tabsContent">
+  <li data-tab="users">Users Content Balala...</li>
+  <li data-tab="groups">Groups Content Balala...</li>
+</ul>
+<script>
+  Math.guid=function(){
+    return 'xxxxxxxx-xxxx-4xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+      var r=Math.random()*16| 0,v=c=='x'?r:(r&0x3|0x8);
+      return v.toString(16);
+    }).toUpperCase();
+  };
+  if(typeof Object.create!=="function"){
+    Object.create=function(o){
+      function F(){};
+      F.prototype=o;
+      return new F();
+    }
+  }
+  var Model={
+    inherited:function(){},
+    created:function(){},
+    prototype:{
+      init:function(){}
+    },
+    create:function(){
+      var object=Object.create(this);
+      object.parent=this;
+      object.prototype=object.fn=Object.create(this.prototype);
+
+      object.created();
+      this.inherited(object);
+      return object;
+    },
+    init:function(){
+      var instance=Object.create(this.prototype);
+      instance.parent=this;
+      instance.init.apply(instance,arguments);
+      return instance;
+    },
+    extend:function(o){
+      var extended= o.extended;
+      jQuery.extend(this,o);
+      if(extended){
+        extended(this);
+      }
+    },
+    include:function(o){
+      var included= o.included;
+      jQuery.extend(this.prototype,o);
+      if(included){
+        included(this);
+      }
+    }
+  }
+  Model.include({
+    init:function(atts){
+      if(atts){
+        this.load(atts);
+      }
+      this.create();
+    },
+    load:function(atts){
+      for(var i in atts){
+        this[i]=atts[i];
+      }
+    }
+  });
+
+  //持久化记录
+  Model.records={};
+  Model.include({
+    newRecord:true,
+    create:function(){
+      if(!this.id){
+        this.id=Math.guid();
+      }
+      this.newRecord=false;
+      this.parent.records[this.id]=this.dup();
+    },
+    destroy:function(){
+      delete this.parent.records[this.id];
+    },
+    update:function(){
+      this.parent.records[this.id]=this.dup();
+    },
+    save:function(){
+      this.newRecord ? this.create() : this.update();
+    },
+    dup:function(){
+      return jQuery.extend(true,{},this);
+    }
+  });
+  Model.extend({
+    find:function(id){
+      var record=this.records[id];
+      if(!record){
+        throw("Unknow record!");
+      }
+      return record.dup();
+    }
+  });
+  Model.extend({
+    created:function(){
+      this.records={};
+      this.attributes=[];
+    }
+  });
+  Model.include({
+    attributes:function(){
+      var result ={};
+      for(var i in this.parent.attributes){
+        var attr=this.parent.attributes[i];
+        result[attr]=this[attr];
+      }
+      result.id=this.id;
+      return result;
+    },
+    toJSON:function(){
+      return(this.attributes());
+    }
+  });
+  var Asset=Model.create();
+
+  Asset.attributes=["name","ext"];
+  var asset=Asset.init({
+    "name":"document",
+    "ext":"txt"
+  });
+  console.log(JSON.stringify(Asset.records));
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8;">
+  <script src="../lib/jquery.js" type="text/javascript" charset="utf-8"></script>
+
+  <script src="../appA/assert.js"></script>
+  <style>
+    #tabs .active{
+      color: #009926;
+    }
+    #tabsContent li{display: none;}
+    #tabsContent li.active{display: block;}
+  </style>
+</head>
+<body class="assets" style="height: 1000px;">
+
+<ul id="view">
+  <li data-tab="users">Users</li>
+  <li data-tab="groups">Groups</li>
+</ul>
+<ul id="tabsContent">
+  <li data-tab="users">Users Content Balala...</li>
+  <li data-tab="groups">Groups Content Balala...</li>
+</ul>
+<script>
+  (function($,exports){
+    var mod={};
+    mod.create=function(includes){
+      var result=function(){
+        this.init.apply(this,arguments);
+      }
+      result.fn=result.prototype;
+      result.fn.init=function(){}
+      result.fn.proxy=function(func){
+        return $.proxy(func,this);
+      };
+      result.proxy=result.fn.proxy;
+      result.load=function(func){
+
+      };
+      result.include=function(ob){
+        $.extend(this.fn,ob);
+      };
+      result.extend=function(ob){
+        $.extend(this,ob);
+      };
+      if(includes){
+        result.include(includes);
+      }
+      return result;
+
+    };
+    exports.Controller=mod;
+  })(jQuery,window);
+  (function($,Controller){
+    var ToggleView=Controller.create({
+      init:function(view){
+        this.view=$(view);
+        this.view.mouseover(this.proxy(this.toggleClass));
+        this.view.mouseout(this.proxy(this.toggleClass));
+      },
+      toggleClass:function(e){
+        this.view.toggleClass("over", e.data);
+      }
+    });
+    new ToggleView("body");
+  })(jQuery,Controller);
+</script>
+</body>
+</html>

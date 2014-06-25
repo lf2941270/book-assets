@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8;">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js">
+  </script>
+  <style>
+    #tabs .active{
+      color: #009926;
+    }
+    #tabsContent li{display: none;}
+    #tabsContent li.active{display: block;}
+  </style>
+</head>
+<body style="height: 1000px;">
+
+<ul id="tabs">
+  <li data-tab="users">Users</li>
+  <li data-tab="groups">Groups</li>
+</ul>
+<ul id="tabsContent">
+  <li data-tab="users">Users Content Balala...</li>
+  <li data-tab="groups">Groups Content Balala...</li>
+</ul>
+<script>
+  (function($){
+    $.fn.tabs=function(control){
+      var element=$(this);
+      control=$(control);
+      element.delegate("li","click",function(){
+        var tabName=$(this).attr("data-tab");
+        element.trigger("change.tabs",tabName);
+      });
+      element.bind("change.tabs",function(e,tabName){
+        element.find("li").removeClass("active");
+        element.find(">[data-tab='"+tabName+"']").addClass("active");
+      });
+      element.bind("change.tabs",function(e,tabName){
+        control.find("li").removeClass("active");
+        control.find(">[data-tab='"+tabName+"']").addClass("active");
+      });
+      /*对地址栏hash做的扩展*/
+      element.bind("change.tabs",function(e,tabName){
+        document.location.hash=tabName;
+      });
+      $(window).bind("hashchange",function(){
+        element.trigger("change.tabs",document.location.hash.slice(1));
+      })
+      var firstName=element.find("li:first").attr("data-tab");
+      element.trigger("change.tabs",firstName);
+      return this;
+    }
+  }(jQuery));
+  $(function(){
+    $("#tabs").tabs("#tabsContent");
+  })
+</script>
+</body>
+</html>

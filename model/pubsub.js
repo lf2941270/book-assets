@@ -5,11 +5,11 @@ var PubSub = {
     this.o = $({});
   },
   
-  subscribe = function() {
+  subscribe: function() {
     this.o.bind.apply( this.o, arguments );
   },
   
-  publish = function() {
+  publish : function() {
     this.o.trigger.apply( this.o, arguments );
   }
 }
