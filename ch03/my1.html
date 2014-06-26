@@ -3,7 +3,7 @@
 <head>
   <title></title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8;">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js">
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js">
   </script>
   <script src="../appA/assert.js"></script>
   <style>
@@ -24,7 +24,7 @@
   <li data-tab="users">Users Content Balala...</li>
   <li data-tab="groups">Groups Content Balala...</li>
 </ul>
-<script>
+<script type="text/javascript">
   Math.guid=function(){
     return 'xxxxxxxx-xxxx-4xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
       var r=Math.random()*16| 0,v=c=='x'?r:(r&0x3|0x8);
@@ -47,7 +47,7 @@
     create:function(){
       var object=Object.create(this);
       object.parent=this;
-      object.prototype=object.fn=Object.create(this.prototype);
+//      object.prototype=object.fn=Object.create(this.prototype);
 
       object.created();
       this.inherited(object);
@@ -142,13 +142,33 @@
     }
   });
   var Asset=Model.create();
+  Model.localStorage={
+    saveLocal:function(name){
+        var result=[];
+        for(var i in this.records){
+            result.push(this.records[i]);
+        }
+        localStorage[name]=JSON.stringify(result);
+    },
+    loadLocal:function(name){
+        var result=JSON.parse(localStorage[name]);
+        this.populate(result);
+    }
+  };
+  Asset.extend(Model.localStorage);
 
   Asset.attributes=["name","ext"];
   var asset=Asset.init({
     "name":"document",
     "ext":"txt"
   });
+  var asset2=Asset.init({
+      "name":"test",
+      "ext":".test"
+  });
+  Asset.saveLocal("test");
   console.log(JSON.stringify(Asset.records));
+
 </script>
 </body>
 </html>

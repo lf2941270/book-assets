@@ -23,7 +23,7 @@
   };
 
   var Model = {
-    init: function(){ },
+    init: function(){},
     
     prototype: {
       init: function(){}
@@ -58,9 +58,9 @@
       return func.apply(thisObject, arguments); 
     });
   };
-  
+
   Model.extend({
-    init: function(){
+    created: function(){
       this.records = {};
       this.attributes = [];
     },
